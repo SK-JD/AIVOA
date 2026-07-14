@@ -18,7 +18,7 @@ class Settings(BaseSettings):
 
     # Groq LLM (bootstrap defaults; runtime-overridable via the admin panel)
     groq_api_key: str = ""
-    groq_model: str = "gemma2-9b-it"
+    groq_model: str = "openai/gpt-oss-120b"
 
     # Admin
     admin_token: str = "change-me-admin-token"

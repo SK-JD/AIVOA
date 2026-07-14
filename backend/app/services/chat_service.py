@@ -5,6 +5,7 @@ tool's `artifact` (our `form_patch` / suggestions / saved_id) off the ToolMessag
 the agent's final reply plus the merged form patch for Redux to apply.
 """
 from langchain_core.messages import AIMessage, HumanMessage, SystemMessage, ToolMessage
+from langgraph.errors import GraphRecursionError
 
 from app.graph.engine import get_graph
 from app.prompts import load_prompt
@@ -12,6 +13,7 @@ from app.schemas import ChatRequest, ChatResponse
 from app.services.llm import GroqNotConfiguredError
 
 FALLBACK_REPLY = "Sorry, I hit a brief hiccup processing that — could you try rephrasing?"
+RECURSION_LIMIT = 12
 
 
 def _build_messages(req: ChatRequest) -> list:
@@ -62,19 +64,39 @@ def run_chat(req: ChatRequest) -> ChatResponse:
         return ChatResponse(reply="What interaction would you like to log?")
 
     state = {"messages": _build_messages(req), "form": req.form.model_dump()}
+    config = {"recursion_limit": RECURSION_LIMIT}
 
     try:
-        result = get_graph().invoke(state)
+        result = get_graph().invoke(state, config=config)
+        messages = result["messages"]
+        reply = _final_reply(messages)
     except GroqNotConfiguredError:
         raise  # surfaced by the router as 503
+    except GraphRecursionError:
+        # The agent looped; recover whatever the tools already produced this turn.
+        messages = _replay_for_messages(state, config)
+        reply = "I've updated the form with what I captured."
     except Exception:  # noqa: BLE001 — never 500 a turn
         return ChatResponse(reply=FALLBACK_REPLY)
 
-    form_patch, suggestions, saved_id, tools_used = _harvest(result["messages"])
+    form_patch, suggestions, saved_id, tools_used = _harvest(messages)
     return ChatResponse(
-        reply=_final_reply(result["messages"]),
+        reply=reply,
         form_patch=form_patch,
         suggestions=suggestions,
         saved_id=saved_id,
         tools_used=tools_used,
     )
+
+
+def _replay_for_messages(state: dict, config: dict) -> list:
+    """On a recursion loop, stream the graph to collect the messages produced before the
+    limit, so the form still updates from the successful tool calls."""
+    collected: list = []
+    try:
+        for update in get_graph().stream(state, config=config, stream_mode="updates"):
+            for node_update in update.values():
+                collected.extend(node_update.get("messages", []) or [])
+    except GraphRecursionError:
+        pass
+    return collected

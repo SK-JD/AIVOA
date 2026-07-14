@@ -3,7 +3,9 @@ export default function DocsPage() {
   return (
     <div className="page docs">
       <h1 className="page-title">Docs · How it works</h1>
+      <p className="page-sub">An AI-first way to log HCP interactions — powered by LangGraph tool-calling.</p>
       <div className="panel card" style={{ maxWidth: 760 }}>
+        <div className="panel-header"><span className="dot" /> Guide</div>
         <div className="panel-body">
           <p>
             This is an <strong>AI-first CRM</strong> for logging Healthcare Professional (HCP)
@@ -16,12 +18,12 @@ export default function DocsPage() {
           <p>
             On the <a href="/">Log Interaction</a> screen, type:
           </p>
-          <p>
+          <span className="callout">
             <code>
               I met Dr. Smith today regarding Product X. He responded positively. I shared two
               brochures and requested a follow-up in two weeks.
             </code>
-          </p>
+          </span>
           <p>The form fills automatically. Then try corrections like:</p>
           <ul>
             <li><code>Change the sentiment to neutral</code></li>

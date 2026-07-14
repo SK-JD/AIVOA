@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { api } from '../services/api'
 import { setToken, setSettings, setTestResult, setStatus, setError } from '../redux/adminSlice'
 
-const MODELS = ['gemma2-9b-it', 'llama-3.3-70b-versatile', 'llama-3.1-8b-instant']
+const MODELS = ['openai/gpt-oss-120b', 'openai/gpt-oss-20b', 'llama-3.1-8b-instant']
 
 // Admin panel: paste/rotate the Groq API key, pick the model, Test Connection, and Save.
 // Settings persist server-side (app_settings) and take effect without a restart.
@@ -11,7 +11,7 @@ export default function AdminPage() {
   const dispatch = useDispatch()
   const { token, settings, testResult, status, error } = useSelector((s) => s.admin)
   const [apiKey, setApiKey] = useState('')
-  const [model, setModel] = useState('gemma2-9b-it')
+  const [model, setModel] = useState('openai/gpt-oss-120b')
 
   async function loadSettings() {
     if (!token) return
@@ -63,8 +63,9 @@ export default function AdminPage() {
   return (
     <div className="page">
       <h1 className="page-title">Admin · Settings</h1>
+      <p className="page-sub">Configure the Groq LLM used by the agent. Changes apply immediately — no restart.</p>
       <div className="panel card">
-        <div className="panel-header">Groq / LLM Configuration</div>
+        <div className="panel-header"><span className="dot" /> Groq / LLM Configuration</div>
         <div className="panel-body">
           <div className="field">
             <label>Admin Token</label>
@@ -100,26 +101,26 @@ export default function AdminPage() {
             </select>
           </div>
 
-          <div style={{ display: 'flex', gap: 8, marginTop: 4 }}>
+          <div style={{ display: 'flex', gap: 10, marginTop: 8 }}>
             <button className="btn" onClick={onTest} disabled={status === 'loading' || !token}>
               Test Connection
             </button>
             <button className="btn primary" onClick={onSave} disabled={status === 'loading' || !token}>
-              Save
+              Save Settings
             </button>
           </div>
 
-          {testResult && (
-            <p style={{ marginTop: 14 }}>
-              {testResult.ok ? (
-                <span className="status-ok">✓ Connected to Groq ({testResult.model})</span>
+          <div style={{ marginTop: 16, display: 'flex', flexDirection: 'column', gap: 8, alignItems: 'flex-start' }}>
+            {testResult && (
+              testResult.ok ? (
+                <span className="pill ok">✓ Connected to Groq ({testResult.model})</span>
               ) : (
-                <span className="status-bad">✗ {testResult.error}</span>
-              )}
-            </p>
-          )}
-          {status === 'saved' && <p className="status-ok">✓ Settings saved — active immediately.</p>}
-          {error && <p className="status-bad">{error}</p>}
+                <span className="pill bad">✗ {testResult.error}</span>
+              )
+            )}
+            {status === 'saved' && <span className="pill ok">✓ Settings saved — active immediately</span>}
+            {error && <span className="pill bad">{error}</span>}
+          </div>
         </div>
       </div>
     </div>

@@ -35,7 +35,7 @@ A single env file lives at **`backend/.env`** (copied from `backend/.env.example
 ```dotenv
 DATABASE_URL=postgresql+psycopg2://crm_user:crm_pass@localhost:5432/aivao_crm
 GROQ_API_KEY=gsk_your_key_here          # or leave blank and set it in the Admin panel
-GROQ_MODEL=gemma2-9b-it
+GROQ_MODEL=openai/gpt-oss-120b          # reliable tool-calling on Groq (gemma2-9b-it is deprecated)
 ADMIN_TOKEN=change-me-admin-token       # required by the Admin panel
 FRONTEND_ORIGIN=http://localhost:5173
 ```

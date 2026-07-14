@@ -16,7 +16,7 @@ def suggest_followups(form: Annotated[dict, InjectedState("form")], context: str
     """Generate 2–4 suggested follow-up actions based on the interaction logged so far
     (HCP, topics, sentiment, outcomes). Optionally pass extra `context`. Use when the user
     asks for follow-up ideas or next steps."""
-    system = load_prompt("system")
+    system = load_prompt("json_system")
     user = load_prompt(
         "followups",
         hcp_name=form.get("hcp_name", ""),

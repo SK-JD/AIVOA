@@ -14,7 +14,7 @@ def log_interaction(description: str):
     topics, materials shared, samples, sentiment, outcomes, follow-up) from a natural-language
     description of a meeting with a Healthcare Professional, and populate the form.
     Use this the first time the user describes an interaction."""
-    system = load_prompt("system")
+    system = load_prompt("json_system")
     user = load_prompt("extract", description=description, today=date.today().isoformat())
     data = llm.complete_json(system, user)
     patch = clean_patch(data)

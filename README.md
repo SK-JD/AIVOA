@@ -15,7 +15,7 @@ language and a **LangGraph agent** (driven by a Groq LLM) populates and edits th
 |---|---|
 | Frontend | React 18 + Redux Toolkit + React Router (Google **Inter** font), Vite |
 | Backend | Python + **FastAPI** (sync, threadpool) |
-| AI | **LangGraph** (tool-calling agent) + **LangChain** + **Groq** (`gemma2-9b-it`) |
+| AI | **LangGraph** (tool-calling agent) + **LangChain** + **Groq** (`openai/gpt-oss-120b`, switchable in the Admin panel) |
 | Database | **PostgreSQL** via SQLAlchemy |
 
 ## The LangGraph agent & its 5 tools
