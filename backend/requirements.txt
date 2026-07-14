@@ -1,0 +1,17 @@
+# Web framework
+fastapi
+uvicorn[standard]
+
+# Database (sync SQLAlchemy + Postgres driver)
+SQLAlchemy>=2.0
+psycopg2-binary
+
+# Settings / validation
+pydantic>=2
+pydantic-settings
+python-dotenv
+
+# AI: LangGraph orchestration + LangChain Groq LLM
+langgraph
+langchain-core
+langchain-groq

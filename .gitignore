@@ -1,0 +1,21 @@
+# Python
+backend/.venv/
+__pycache__/
+*.pyc
+
+# Env / secrets
+.env
+backend/.env
+
+# Node / frontend
+frontend/node_modules/
+frontend/dist/
+
+# Editor / OS
+.DS_Store
+.vscode/
+.idea/
+
+# Assignment reference material & personal notes — not part of the submission
+info/
+Lang_docs/

@@ -1,0 +1,24 @@
+Extract structured HCP-interaction details from the rep's description below and return a SINGLE
+JSON object. Only include information actually present or clearly implied — leave anything unknown
+as an empty string or empty list. Do NOT invent names, products, or dates.
+
+Today's date is {{ today }} (format YYYY-MM-DD). Resolve relative dates ("today", "tomorrow",
+"in two weeks") against it where they refer to when the interaction happened.
+
+Return JSON with exactly these keys:
+{
+  "hcp_name": "the HCP's name, e.g. 'Dr. Smith' (string)",
+  "interaction_type": "one of: Meeting, Call, Email, Conference, Virtual (default 'Meeting')",
+  "date": "YYYY-MM-DD if a meeting date is given, else ''",
+  "time": "HH:MM 24h if a time is given, else ''",
+  "attendees": ["other people present, excluding the HCP"],
+  "topics": "key discussion points / products discussed (string)",
+  "materials_shared": ["brochures, PDFs, materials shown/shared"],
+  "samples_distributed": ["drug samples handed over"],
+  "sentiment": "Positive | Neutral | Negative — the HCP's observed/inferred reaction",
+  "outcomes": "agreements or key outcomes (string)",
+  "followup_actions": "next steps / follow-up the rep committed to (string)"
+}
+
+Description:
+{{ description }}
