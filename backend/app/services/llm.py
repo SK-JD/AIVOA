@@ -38,7 +38,7 @@ def get_chat_model(temperature: float = 0.3, json_mode: bool = False, api_key: O
         "model": model or settings_service.get_groq_model(),
         "api_key": api_key or _resolve_key(),
         "temperature": temperature,
-        "max_retries": 1,
+        "max_retries": 3,  # ride out transient Groq rate-limits (429) with backoff
         "timeout": 45,
     }
     if json_mode:

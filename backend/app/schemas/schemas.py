@@ -10,6 +10,20 @@ from pydantic import BaseModel, Field
 Sentiment = Literal["Positive", "Neutral", "Negative"]
 
 
+class Material(BaseModel):
+    """A piece of marketing collateral shared with the HCP (catalog-typed)."""
+
+    type: str = "Other Marketing Material"
+    name: str = ""
+
+
+class Sample(BaseModel):
+    """A physical product sample handed to the HCP."""
+
+    name: str = ""
+    quantity: int = 1
+
+
 class FormState(BaseModel):
     """The Log HCP Interaction form. All fields optional so a patch can be partial."""
 
@@ -19,8 +33,8 @@ class FormState(BaseModel):
     time: str = ""
     attendees: list[str] = Field(default_factory=list)
     topics: str = ""
-    materials_shared: list[str] = Field(default_factory=list)
-    samples_distributed: list[str] = Field(default_factory=list)
+    materials_shared: list[Material] = Field(default_factory=list)
+    samples_distributed: list[Sample] = Field(default_factory=list)
     sentiment: Sentiment = "Neutral"
     outcomes: str = ""
     followup_actions: str = ""

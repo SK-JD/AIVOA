@@ -6,16 +6,20 @@ from langgraph.prebuilt import InjectedState
 
 from app.database.session import SessionLocal
 from app.models.models import Interaction
+from app.services.form_logic import missing_required
 
 
 @tool(response_format="content_and_artifact")
 def save_interaction(form: Annotated[dict, InjectedState("form")]):
     """Persist the current interaction form to the CRM database. Use when the user asks to
-    log / save / submit the interaction. Requires at least an HCP name."""
-    if not (form.get("hcp_name") or "").strip():
+    log / save / submit the interaction. Requires HCP Name and Topics Discussed; if either is
+    missing, do NOT save — ask the user for it instead."""
+    missing = missing_required(form)
+    if missing:
         return (
-            "There's nothing to save yet — describe the interaction first so I can fill the form.",
-            {"tools_used": ["save_interaction"]},
+            f"I can't save yet — still missing: {', '.join(missing)}. "
+            "Could you provide that so I can complete the record?",
+            {"tools_used": ["save_interaction"], "missing_required": missing},
         )
 
     db = SessionLocal()

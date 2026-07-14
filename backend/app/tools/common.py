@@ -5,11 +5,16 @@ Keeps the form contract (field names + types) in one place so every tool produce
 """
 import re
 
+from app.config.catalog import resolve_material_type
+
 STRING_FIELDS = {
     "hcp_name", "interaction_type", "date", "time",
     "topics", "sentiment", "outcomes", "followup_actions",
 }
-LIST_FIELDS = {"attendees", "materials_shared", "samples_distributed"}
+SIMPLE_LIST_FIELDS = {"attendees"}          # list[str]
+MATERIAL_FIELDS = {"materials_shared"}      # list[{type, name}]
+SAMPLE_FIELDS = {"samples_distributed"}     # list[{name, quantity}]
+LIST_FIELDS = SIMPLE_LIST_FIELDS | MATERIAL_FIELDS | SAMPLE_FIELDS
 ALL_FIELDS = STRING_FIELDS | LIST_FIELDS
 
 SENTIMENTS = {"positive": "Positive", "neutral": "Neutral", "negative": "Negative"}
@@ -45,11 +50,50 @@ def _split_list(value) -> list[str]:
         items = value
     else:
         items = re.split(r",|;|\band\b", str(value))
-    return [s.strip() for s in items if s and s.strip()]
+    return [s.strip() for s in items if isinstance(s, str) and s.strip()]
+
+
+def _as_items(value) -> list:
+    """Return raw items (dicts kept as-is, strings split on separators)."""
+    if isinstance(value, list):
+        return [i for i in value if i not in ("", None)]
+    return _split_list(value)
+
+
+def _as_material(item) -> dict:
+    """Normalize a string or dict into a catalog-typed material {type, name}."""
+    if isinstance(item, dict):
+        name = str(item.get("name") or item.get("type") or "").strip()
+        mtype = str(item.get("type") or "").strip() or resolve_material_type(name)
+        return {"type": mtype, "name": name or mtype}
+    text = str(item).strip()
+    return {"type": resolve_material_type(text), "name": text}
+
+
+def _as_sample(item) -> dict:
+    """Normalize a string or dict into a sample {name, quantity}."""
+    if isinstance(item, dict):
+        name = str(item.get("name") or "").strip()
+        try:
+            qty = int(item.get("quantity") or 1)
+        except (TypeError, ValueError):
+            qty = 1
+        return {"name": name, "quantity": max(qty, 1)}
+    return {"name": str(item).strip(), "quantity": 1}
 
 
 def coerce_value(key: str, value):
-    if key in LIST_FIELDS:
+    if key in MATERIAL_FIELDS:
+        out, seen = [], set()
+        for m in (_as_material(i) for i in _as_items(value)):
+            fp = (m["type"], m["name"].lower())
+            if m["name"] and fp not in seen:
+                seen.add(fp)
+                out.append(m)
+        return out
+    if key in SAMPLE_FIELDS:
+        return [s for s in (_as_sample(i) for i in _as_items(value)) if s["name"]]
+    if key in SIMPLE_LIST_FIELDS:
         return _split_list(value)
     if key == "sentiment":
         return SENTIMENTS.get(str(value).strip().lower(), "Neutral")

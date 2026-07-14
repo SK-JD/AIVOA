@@ -4,20 +4,40 @@ Flow: build messages (system + history + latest) → `graph.invoke(state)` → h
 tool's `artifact` (our `form_patch` / suggestions / saved_id) off the ToolMessages → return
 the agent's final reply plus the merged form patch for Redux to apply.
 """
+import logging
+from datetime import date
+
 from langchain_core.messages import AIMessage, HumanMessage, SystemMessage, ToolMessage
 from langgraph.errors import GraphRecursionError
+
+logger = logging.getLogger(__name__)
 
 from app.graph.engine import get_graph
 from app.prompts import load_prompt
 from app.schemas import ChatRequest, ChatResponse
+from app.services.form_logic import form_summary, missing_recommended, missing_required
 from app.services.llm import GroqNotConfiguredError
 
 FALLBACK_REPLY = "Sorry, I hit a brief hiccup processing that — could you try rephrasing?"
 RECURSION_LIMIT = 12
 
 
+def _system_message(form: dict) -> SystemMessage:
+    """Render the form-aware system prompt for this turn."""
+    required = missing_required(form)
+    recommended = missing_recommended(form)
+    content = load_prompt(
+        "system",
+        today=date.today().isoformat(),
+        current_form=form_summary(form),
+        missing_required=", ".join(required) if required else "none",
+        missing_recommended=", ".join(recommended) if recommended else "none",
+    )
+    return SystemMessage(content=content)
+
+
 def _build_messages(req: ChatRequest) -> list:
-    messages: list = [SystemMessage(content=load_prompt("system"))]
+    messages: list = [_system_message(req.form.model_dump())]
     for m in req.messages:
         if m.role == "user":
             messages.append(HumanMessage(content=m.content))
@@ -77,6 +97,7 @@ def run_chat(req: ChatRequest) -> ChatResponse:
         messages = _replay_for_messages(state, config)
         reply = "I've updated the form with what I captured."
     except Exception:  # noqa: BLE001 — never 500 a turn
+        logger.exception("chat turn failed; returning safe fallback")
         return ChatResponse(reply=FALLBACK_REPLY)
 
     form_patch, suggestions, saved_id, tools_used = _harvest(messages)

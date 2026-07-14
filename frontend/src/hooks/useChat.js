@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from 'react-redux'
 import { api } from '../services/api'
 import { addMessage, setStatus, setError } from '../redux/chatSlice'
-import { applyPatch, setSuggestions, setSavedId } from '../redux/formSlice'
+import { applyPatch, clearUpdated, setSuggestions, setSavedId } from '../redux/formSlice'
 
 // Sends a user message to the LangGraph agent, then applies the returned form patch,
 // suggestions, and reply to the store. This is the single AI → form update path.
@@ -33,6 +33,7 @@ export function useChat() {
       })
       if (res.form_patch && Object.keys(res.form_patch).length) {
         dispatch(applyPatch(res.form_patch))
+        setTimeout(() => dispatch(clearUpdated()), 1800)
       }
       if (res.suggestions && res.suggestions.length) {
         dispatch(setSuggestions(res.suggestions))

@@ -32,14 +32,23 @@ export default function DocsPage() {
             <li><code>Log it</code> — saves the interaction to the database</li>
           </ul>
 
-          <h3>The 5 LangGraph tools</h3>
+          <h3>The 6 LangGraph tools</h3>
           <ul>
             <li><strong>log_interaction</strong> — extracts structured fields from free text.</li>
             <li><strong>edit_interaction</strong> — updates a single field on request.</li>
             <li><strong>search_hcp</strong> — resolves the HCP against the CRM directory.</li>
+            <li><strong>search_materials</strong> — maps a mentioned material to the CRM catalog.</li>
             <li><strong>suggest_followups</strong> — proposes next-step actions.</li>
-            <li><strong>save_interaction</strong> — persists the completed form to PostgreSQL.</li>
+            <li><strong>save_interaction</strong> — validates required fields, then persists to PostgreSQL.</li>
           </ul>
+
+          <h3>What makes it "AI-first"</h3>
+          <p>
+            The assistant reasons about the form: it <strong>asks a clarifying question</strong> when
+            a required field (HCP Name, Topics) is missing, keeps <strong>Outcomes</strong> ("what
+            happened") separate from <strong>Follow-up Actions</strong> ("what's next"), and
+            <strong> won't save</strong> an incomplete record — it asks for the missing details first.
+          </p>
 
           <h3>Admin</h3>
           <p>

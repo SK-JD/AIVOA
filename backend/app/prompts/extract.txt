@@ -8,17 +8,21 @@ Today's date is {{ today }} (format YYYY-MM-DD). Resolve relative dates ("today"
 Return JSON with exactly these keys:
 {
   "hcp_name": "the HCP's name, e.g. 'Dr. Smith' (string)",
-  "interaction_type": "one of: Meeting, Call, Email, Conference, Virtual (default 'Meeting')",
+  "interaction_type": "one of: Meeting, Call, Email, Conference, Virtual. Infer from the verb: 'met'/'visited' -> Meeting, 'called'/'phoned' -> Call, 'emailed' -> Email, 'video'/'zoom' -> Virtual. Default 'Meeting'",
   "date": "YYYY-MM-DD if a meeting date is given, else ''",
   "time": "HH:MM 24h if a time is given, else ''",
-  "attendees": ["other people present, excluding the HCP"],
-  "topics": "key discussion points / products discussed (string)",
-  "materials_shared": ["brochures, PDFs, materials shown/shared"],
-  "samples_distributed": ["drug samples handed over"],
+  "attendees": ["other people present BESIDES the HCP (e.g. 'Regional Manager', 'Product Specialist', 'Nurse'); exclude the HCP"],
+  "topics": "concise comma-separated discussion points (e.g. 'Product X efficacy, dosage, side effects')",
+  "materials_shared": [{"type": "one of: Brochure, Product Leaflet, Clinical Study, Research Paper, Product Catalogue, Presentation Deck, Safety Information, Other Marketing Material", "name": "short label e.g. 'Product X Brochure'"}],
+  "samples_distributed": [{"name": "product sample name e.g. 'Product X Sample'", "quantity": 1}],
   "sentiment": "Positive | Neutral | Negative — the HCP's observed/inferred reaction",
-  "outcomes": "agreements or key outcomes (string)",
-  "followup_actions": "next steps / follow-up the rep committed to (string)"
+  "outcomes": "WHAT HAPPENED as a result of the meeting (e.g. 'Showed interest and accepted brochures', 'Requested more clinical data'). This is the RESULT, not the next step.",
+  "followup_actions": "WHAT SHOULD HAPPEN NEXT — concrete next steps the rep will take (e.g. 'Send Phase III PDF; schedule follow-up in 2 weeks'). This is the NEXT ACTION, not what already happened."
 }
+
+Materials vs samples: brochures/leaflets/studies/papers/decks are `materials_shared`; physical drug
+samples handed over are `samples_distributed`. Keep them separate.
+Outcomes vs follow-up: outcomes = the result that already occurred; follow_up = future action.
 
 Description:
 {{ description }}

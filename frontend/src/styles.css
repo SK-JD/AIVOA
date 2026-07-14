@@ -201,7 +201,18 @@ select {
 }
 .subhead::after { content: ''; flex: 1; height: 1px; background: var(--border); }
 
-/* material / sample boxes (mock-accurate) */
+/* required marker + field hints */
+.req { color: var(--neg); font-weight: 700; }
+.hint { color: var(--muted); font-weight: 500; font-size: 11.5px; }
+
+/* live AI-update highlight */
+@keyframes fieldflash {
+  0% { background: var(--primary-soft); box-shadow: 0 0 0 3px var(--primary-ring); }
+  100% { background: transparent; box-shadow: 0 0 0 0 transparent; }
+}
+.field.updated, .flash { animation: fieldflash 1.8s ease-out; border-radius: 8px; }
+
+/* material / sample boxes */
 .matbox {
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
@@ -213,6 +224,33 @@ select {
 .matbox-head .t { font-weight: 600; font-size: 13px; color: var(--text-2); }
 .matbox .empty { color: var(--muted); font-size: 12.5px; margin-top: 8px; }
 .matbox .add-row { display: flex; gap: 8px; margin-top: 10px; }
+.matbox .picker { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+.matbox .picker select { flex: 0 0 auto; min-width: 150px; }
+.matbox .picker input { flex: 1; min-width: 140px; }
+.sample-add { display: flex; gap: 8px; margin-top: 10px; }
+.sample-add input.qty { flex: 0 0 64px; text-align: center; }
+
+/* materials preview cards */
+.mat-cards { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
+.mat-card {
+  display: flex; align-items: center; gap: 10px;
+  background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+  padding: 9px 11px; min-width: 170px; box-shadow: var(--shadow-sm);
+}
+.mat-card .mat-icon {
+  display: grid; place-items: center; width: 34px; height: 34px; flex: none;
+  border-radius: 8px; background: var(--primary-soft); color: var(--primary-600); border: 1px solid #e0e3fb;
+}
+.mat-card .mat-meta { display: flex; flex-direction: column; line-height: 1.25; min-width: 0; }
+.mat-card .mat-name { font-weight: 600; font-size: 12.5px; color: var(--text); overflow: hidden; text-overflow: ellipsis; }
+.mat-card .mat-type { font-size: 11px; color: var(--muted); }
+.mat-card .mat-remove {
+  margin-left: auto; border: none; background: none; color: var(--muted); cursor: pointer;
+  display: grid; place-items: center; padding: 2px; border-radius: 6px;
+}
+.mat-card .mat-remove:hover { color: var(--neg); background: #fef3f2; }
+.chip.sample { background: #ecfdf5; color: #067647; border-color: #abefc6; }
+.chip.sample button { color: #067647; }
 
 /* chips */
 .chips { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 10px; }

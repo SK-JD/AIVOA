@@ -7,12 +7,14 @@ from app.tools.edit_interaction import edit_interaction
 from app.tools.log_interaction import log_interaction
 from app.tools.save_interaction import save_interaction
 from app.tools.search_hcp import search_hcp
+from app.tools.search_materials import search_materials
 from app.tools.suggest_followups import suggest_followups
 
 TOOLS = [
     log_interaction,
     edit_interaction,
     search_hcp,
+    search_materials,
     suggest_followups,
     save_interaction,
 ]

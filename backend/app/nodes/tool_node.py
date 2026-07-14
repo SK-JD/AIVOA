@@ -13,14 +13,17 @@ from app.tools import TOOLS
 _base = ToolNode(TOOLS)
 
 
-def tool_node(state: AgentState) -> dict:
-    result = _base.invoke(state)
-    messages = result["messages"]
-
-    form = dict(state.get("form") or {})
+def advance_form(form: dict, messages: list) -> dict:
+    """Merge every tool's `form_patch` artifact into the form (in call order)."""
+    merged = dict(form or {})
     for msg in messages:
         artifact = getattr(msg, "artifact", None)
         if isinstance(artifact, dict):
-            form.update(artifact.get("form_patch", {}) or {})
+            merged.update(artifact.get("form_patch", {}) or {})
+    return merged
 
-    return {"messages": messages, "form": form}
+
+def tool_node(state: AgentState) -> dict:
+    result = _base.invoke(state)
+    messages = result["messages"]
+    return {"messages": messages, "form": advance_form(state.get("form"), messages)}

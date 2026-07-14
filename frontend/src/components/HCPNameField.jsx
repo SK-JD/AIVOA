@@ -5,7 +5,7 @@ import { api } from '../services/api'
 
 // HCP Name field with directory autocomplete (GET /api/hcps). The AI can also fill this
 // via search_hcp; this input lets the value be confirmed/adjusted against the directory.
-export default function HCPNameField() {
+export default function HCPNameField({ highlight = false }) {
   const dispatch = useDispatch()
   const value = useSelector((s) => s.form.hcp_name)
   const [results, setResults] = useState([])
@@ -42,8 +42,8 @@ export default function HCPNameField() {
   }
 
   return (
-    <div className="field autocomplete" ref={boxRef}>
-      <label>HCP Name</label>
+    <div className={`field autocomplete${highlight ? ' updated' : ''}`} ref={boxRef}>
+      <label>HCP Name <span className="req">*</span></label>
       <input
         type="text"
         placeholder="Search or select HCP..."
