@@ -32,6 +32,7 @@ export const api = {
   // App
   sendChat: (payload) => request('/chat', { method: 'POST', body: JSON.stringify(payload) }),
   searchHcps: (q) => request(`/hcps?q=${encodeURIComponent(q)}`),
+  createHcp: (body) => request('/hcps', { method: 'POST', body: JSON.stringify(body) }),
   saveInteraction: (form) => request('/interactions', { method: 'POST', body: JSON.stringify(form) }),
   listInteractions: () => request('/interactions'),
 

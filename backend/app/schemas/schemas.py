@@ -95,6 +95,14 @@ class HCPOut(BaseModel):
     organization: str
 
 
+class HCPCreate(BaseModel):
+    """Add a Healthcare Professional to the directory."""
+
+    name: str
+    specialty: str = ""
+    organization: str = ""
+
+
 class SettingsOut(BaseModel):
     groq_api_key_masked: str
     groq_model: str

@@ -34,7 +34,7 @@ fi
 
 echo "▶ Database: create (if needed), migrate, and seed"
 python -m app.database.create_db
-python -m app.database.seed   # runs init_db() then seeds sample HCPs
+python -m app.database.seed   # creates the tables (HCP directory starts empty)
 deactivate
 
 # ── Frontend ─────────────────────────────────────────────────

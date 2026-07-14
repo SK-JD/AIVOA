@@ -1,20 +1,14 @@
-"""Seed the HCP directory with a few sample Healthcare Professionals.
+"""Initialize the database schema.
 
-Idempotent: running it again won't duplicate rows. Invoked by the setup script
-and re-runnable via `python -m app.database.seed`.
+The HCP directory is user-managed — add HCPs from the HCP Directory page (or
+POST /api/hcps) — so no sample HCPs are seeded. This just ensures the tables exist.
+Invoked by the setup script and re-runnable via `python -m app.database.seed`.
 """
 from app.database.session import SessionLocal, init_db
 from app.models.models import HCP
 
-SAMPLE_HCPS = [
-    {"name": "Dr. Rajesh Kumar", "specialty": "Senior Cardiologist", "organization": "Apollo Hospital, Chennai"},
-    {"name": "Dr. Smith", "specialty": "Oncology", "organization": "City General Hospital"},
-    {"name": "Dr. Sharma", "specialty": "Cardiology", "organization": "Apollo Clinic"},
-    {"name": "Dr. Patel", "specialty": "Neurology", "organization": "Sunrise Medical Center"},
-    {"name": "Dr. Johnson", "specialty": "Endocrinology", "organization": "Metro Health"},
-    {"name": "Dr. Lee", "specialty": "Dermatology", "organization": "Wellness Institute"},
-    {"name": "Dr. Garcia", "specialty": "Pediatrics", "organization": "Children's Care Hospital"},
-]
+# HCPs are added via the UI, not seeded. Add entries here if you want sample data.
+SAMPLE_HCPS: list[dict] = []
 
 
 def seed() -> None:
@@ -28,7 +22,7 @@ def seed() -> None:
                 db.add(HCP(**row))
                 added += 1
         db.commit()
-        print(f"Seed complete. Added {added} HCP(s); {len(existing) + added} total.")
+        print(f"Database ready. Seeded {added} HCP(s); {len(existing) + added} in directory.")
     finally:
         db.close()
 

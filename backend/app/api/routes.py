@@ -10,6 +10,7 @@ from app.schemas import (
     ChatRequest,
     ChatResponse,
     FormState,
+    HCPCreate,
     HCPOut,
     InteractionOut,
     SettingsIn,
@@ -59,6 +60,22 @@ def list_hcps(q: str = "", db: Session = Depends(get_db)) -> list[HCP]:
     if q.strip():
         query = query.filter(HCP.name.ilike(f"%{q.strip()}%"))
     return query.order_by(HCP.name).limit(200).all()
+
+
+@router.post("/hcps", response_model=HCPOut)
+def create_hcp(body: HCPCreate, db: Session = Depends(get_db)) -> HCP:
+    """Add an HCP to the directory (from the HCP Directory page)."""
+    name = body.name.strip()
+    if not name:
+        raise HTTPException(status_code=422, detail="HCP name is required.")
+    existing = db.query(HCP).filter(HCP.name.ilike(name)).first()
+    if existing:
+        raise HTTPException(status_code=409, detail=f"'{name}' already exists in the directory.")
+    hcp = HCP(name=name, specialty=body.specialty.strip(), organization=body.organization.strip())
+    db.add(hcp)
+    db.commit()
+    db.refresh(hcp)
+    return hcp
 
 
 @router.post("/interactions")

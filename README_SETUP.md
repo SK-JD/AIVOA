@@ -21,7 +21,7 @@ bash scripts/setup.sh
 This will:
 1. Create the backend virtualenv (`backend/.venv`) and install Python dependencies.
 2. Create `backend/.env` from the template (if missing).
-3. Create the PostgreSQL database (if missing), create tables, and seed sample HCPs.
+3. Create the PostgreSQL database (if missing) and create the tables (the HCP directory is empty — add HCPs from the UI).
 4. Install frontend npm dependencies.
 
 > If PostgreSQL uses credentials other than the defaults, edit **`backend/.env`** →
@@ -53,7 +53,7 @@ python3 -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
 cp .env.example .env            # then edit DATABASE_URL / GROQ_API_KEY / ADMIN_TOKEN
 python -m app.database.create_db   # create the database if it doesn't exist
-python -m app.database.seed        # create tables + seed sample HCPs
+python -m app.database.seed        # create tables (HCP directory starts empty)
 deactivate
 
 # Frontend
