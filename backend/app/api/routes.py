@@ -9,13 +9,16 @@ from app.models.models import HCP
 from app.schemas import (
     ChatRequest,
     ChatResponse,
+    FormState,
     HCPOut,
+    InteractionOut,
     SettingsIn,
     SettingsOut,
     TestConnectionIn,
     TestConnectionResult,
 )
-from app.services import chat_service, llm, settings_service, voice
+from app.services import chat_service, interaction_service, llm, settings_service, voice
+from app.services.form_logic import missing_required
 
 router = APIRouter(prefix="/api")
 
@@ -51,11 +54,28 @@ async def transcribe_voice(file: UploadFile = File(...)) -> dict:
 
 @router.get("/hcps", response_model=list[HCPOut])
 def list_hcps(q: str = "", db: Session = Depends(get_db)) -> list[HCP]:
-    """Search the HCP directory (used by the HCP Name field autocomplete)."""
+    """Search the HCP directory (used by the HCP Name field autocomplete + directory page)."""
     query = db.query(HCP)
     if q.strip():
         query = query.filter(HCP.name.ilike(f"%{q.strip()}%"))
-    return query.order_by(HCP.name).limit(20).all()
+    return query.order_by(HCP.name).limit(200).all()
+
+
+@router.post("/interactions")
+def create_interaction(form: FormState) -> dict:
+    """Save the current form directly (the 'Save Interaction' button). Validates required fields."""
+    data = form.model_dump()
+    missing = missing_required(data)
+    if missing:
+        raise HTTPException(status_code=422, detail=f"Missing required fields: {', '.join(missing)}")
+    saved_id = interaction_service.save_interaction(data)
+    return {"saved_id": saved_id}
+
+
+@router.get("/interactions", response_model=list[InteractionOut])
+def list_interactions() -> list[dict]:
+    """All saved interactions (newest first) — the records / pipeline table."""
+    return interaction_service.list_interactions()
 
 
 # ── Admin ─────────────────────────────────────────────────────────────────────

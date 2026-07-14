@@ -15,9 +15,27 @@ def test_edit_interaction_sets_scalar():
     assert art["form_patch"] == {"sentiment": "Positive"}
 
 
-def test_edit_interaction_appends_to_list():
-    _, art = edit_interaction.func(field="attendees", value="Dr. Lee", form={"attendees": ["Nurse Jo"]})
-    assert art["form_patch"]["attendees"] == ["Nurse Jo", "Dr. Lee"]
+def test_edit_interaction_adds_to_list():
+    form = {"attendees": [{"name": "Nurse Jo", "role": ""}]}
+    _, art = edit_interaction.func(field="attendees", value="Dr. Lee", form=form, action="add")
+    assert [a["name"] for a in art["form_patch"]["attendees"]] == ["Nurse Jo", "Dr. Lee"]
+
+
+def test_edit_interaction_removes_specific_item():
+    form = {"attendees": [{"name": "Dr. Lee", "role": ""}, {"name": "Nurse Jo", "role": ""}]}
+    _, art = edit_interaction.func(field="attendees", value="Dr. Lee", form=form, action="remove")
+    assert [a["name"] for a in art["form_patch"]["attendees"]] == ["Nurse Jo"]
+
+
+def test_edit_interaction_clears_list_field():
+    form = {"attendees": [{"name": "Dr. Lee", "role": ""}]}
+    _, art = edit_interaction.func(field="attendees", form=form, action="clear")
+    assert art["form_patch"] == {"attendees": []}
+
+
+def test_edit_interaction_clears_scalar_field():
+    _, art = edit_interaction.func(field="topics", form={"topics": "Product X"}, action="clear")
+    assert art["form_patch"] == {"topics": ""}
 
 
 def test_edit_interaction_unknown_field():

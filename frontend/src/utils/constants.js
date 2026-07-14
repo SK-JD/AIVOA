@@ -1,6 +1,6 @@
 // Shared constants and the canonical empty form (mirrors backend FormState).
 
-export const INTERACTION_TYPES = ['Meeting', 'Call', 'Email', 'Conference', 'Virtual']
+export const INTERACTION_TYPES = ['In-person Meeting', 'Call', 'Email', 'Virtual', 'Conference']
 export const SENTIMENTS = ['Positive', 'Neutral', 'Negative']
 
 // Marketing-collateral catalog (mirrors backend app/config/catalog.py). `icon` → Icon name.
@@ -22,10 +22,11 @@ export const REQUIRED_FIELDS = ['hcp_name', 'topics']
 
 export const EMPTY_FORM = {
   hcp_name: '',
-  interaction_type: 'Meeting',
+  interaction_type: 'In-person Meeting',
   date: '',
   time: '',
-  attendees: [],
+  duration: '',
+  attendees: [], // [{ name, role }]
   topics: '',
   materials_shared: [], // [{ type, name }]
   samples_distributed: [], // [{ name, quantity }]

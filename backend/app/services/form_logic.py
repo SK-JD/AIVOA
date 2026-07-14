@@ -41,8 +41,9 @@ def form_summary(form: dict) -> str:
 
     order = [
         ("hcp_name", "HCP Name"), ("interaction_type", "Interaction Type"),
-        ("date", "Date"), ("time", "Time"), ("attendees", "Attendees"),
-        ("topics", "Topics Discussed"), ("materials_shared", "Materials Shared"),
+        ("date", "Date"), ("time", "Time"), ("duration", "Duration"),
+        ("attendees", "Attendees"), ("topics", "Topics Discussed"),
+        ("materials_shared", "Materials Shared"),
         ("samples_distributed", "Samples Distributed"), ("sentiment", "Sentiment"),
         ("outcomes", "Outcomes"), ("followup_actions", "Follow-up Actions"),
     ]

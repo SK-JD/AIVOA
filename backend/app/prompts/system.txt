@@ -14,8 +14,13 @@ Still missing (recommended): {{ missing_recommended }}
 Tools:
 - log_interaction: extract ALL structured fields from a natural-language description of a meeting.
   Call this ONCE when the user first describes an interaction.
-- edit_interaction: change a SINGLE field on a correction (e.g. "change sentiment to neutral",
-  "add Dr. Sharma to attendees").
+- edit_interaction: change a SINGLE field. Choose the action:
+    • set    — replace a value ("change sentiment to neutral", "set duration to 30 minutes")
+    • add    — append to a list ("add Dr. Sharma to attendees")
+    • remove — remove a specific item from a list ("remove Dr. Sharma from attendees")
+    • clear  — empty a field ("clear the attendees", "remove all materials", "clear topics")
+  When the user asks to clear/empty/remove-all of a field, you MUST call edit_interaction with
+  action="clear". When they name a specific item to drop, use action="remove".
 - search_hcp: resolve/confirm the HCP against the CRM directory.
 - search_materials: resolve a mentioned material (brochure, clinical study, leaflet…) to the CRM
   material catalog and add it.

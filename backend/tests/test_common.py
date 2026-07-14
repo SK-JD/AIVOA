@@ -10,14 +10,28 @@ def test_normalize_field_aliases():
     assert normalize_field("unknown field") is None
 
 
+def test_coerce_time_to_24h():
+    assert coerce_value("time", "10:30 AM") == "10:30"
+    assert coerce_value("time", "2:15 PM") == "14:15"
+    assert coerce_value("time", "12:00 AM") == "00:00"
+    assert coerce_value("time", "09:00") == "09:00"
+
+
 def test_coerce_sentiment_normalizes():
     assert coerce_value("sentiment", "positive") == "Positive"
     assert coerce_value("sentiment", "NEGATIVE") == "Negative"
     assert coerce_value("sentiment", "unsure") == "Neutral"
 
 
-def test_coerce_attendees_splits_and_trims():
-    assert coerce_value("attendees", "Dr. Lee and Nurse Jo, Manager") == ["Dr. Lee", "Nurse Jo", "Manager"]
+def test_coerce_attendees_to_objects():
+    out = coerce_value("attendees", "Dr. Lee and Nurse Jo, Manager")
+    assert [a["name"] for a in out] == ["Dr. Lee", "Nurse Jo", "Manager"]
+    assert all("role" in a for a in out)
+
+
+def test_coerce_attendees_accepts_objects_with_roles():
+    out = coerce_value("attendees", [{"name": "Anitha Rao", "role": "Product Specialist"}])
+    assert out == [{"name": "Anitha Rao", "role": "Product Specialist"}]
 
 
 def test_coerce_materials_maps_catalog_and_dedupes():

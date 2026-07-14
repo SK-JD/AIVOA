@@ -32,6 +32,8 @@ export const api = {
   // App
   sendChat: (payload) => request('/chat', { method: 'POST', body: JSON.stringify(payload) }),
   searchHcps: (q) => request(`/hcps?q=${encodeURIComponent(q)}`),
+  saveInteraction: (form) => request('/interactions', { method: 'POST', body: JSON.stringify(form) }),
+  listInteractions: () => request('/interactions'),
 
   // Voice: multipart upload (no JSON Content-Type — the browser sets the boundary)
   transcribe: async (blob) => {

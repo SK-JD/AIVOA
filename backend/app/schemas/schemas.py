@@ -24,6 +24,13 @@ class Sample(BaseModel):
     quantity: int = 1
 
 
+class Attendee(BaseModel):
+    """A person present at the interaction, with their role (e.g. Product Specialist)."""
+
+    name: str = ""
+    role: str = ""
+
+
 class FormState(BaseModel):
     """The Log HCP Interaction form. All fields optional so a patch can be partial."""
 
@@ -31,13 +38,33 @@ class FormState(BaseModel):
     interaction_type: str = "Meeting"
     date: str = ""
     time: str = ""
-    attendees: list[str] = Field(default_factory=list)
+    duration: str = ""
+    attendees: list[Attendee] = Field(default_factory=list)
     topics: str = ""
     materials_shared: list[Material] = Field(default_factory=list)
     samples_distributed: list[Sample] = Field(default_factory=list)
     sentiment: Sentiment = "Neutral"
     outcomes: str = ""
     followup_actions: str = ""
+
+
+class InteractionOut(BaseModel):
+    """A saved interaction row for the records table."""
+
+    id: int
+    hcp_name: str
+    interaction_type: str
+    date: str
+    time: str
+    duration: str = ""
+    attendees: list = Field(default_factory=list)
+    topics: str
+    materials_shared: list = Field(default_factory=list)
+    samples_distributed: list = Field(default_factory=list)
+    sentiment: str
+    outcomes: str
+    followup_actions: str
+    created_at: str = ""
 
 
 class ChatMessage(BaseModel):

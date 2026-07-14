@@ -20,7 +20,10 @@ const TOC = [
 function Section({ id, n, title, children }) {
   return (
     <section id={id} className="doc-section">
-      <h2><span className="num">{n}</span> {title}</h2>
+      <h2 className="mb-3 flex items-center gap-2.5 text-base font-bold tracking-tight">
+        <span className="grid h-6 w-6 flex-none place-items-center rounded-[7px] bg-brand-soft text-xs font-bold text-brand-600">{n}</span>
+        {title}
+      </h2>
       {children}
     </section>
   )
@@ -28,19 +31,19 @@ function Section({ id, n, title, children }) {
 
 export default function DocsPage() {
   return (
-    <div className="page docs">
-      <h1 className="page-title">Documentation</h1>
-      <p className="page-sub">How the AI-first CRM is built — architecture, LangGraph workflow, tools, voice, and data.</p>
+    <div className="px-4 pb-12 pt-6 sm:px-8">
+      <h1 className="text-xl font-bold tracking-tight">Documentation</h1>
+      <p className="mb-5 text-[13px] text-slate-400">How the AI-first CRM is built — architecture, LangGraph workflow, tools, voice, and data.</p>
 
-      <div className="docs-layout">
-        <nav className="docs-toc">
-          <div className="toc-title">On this page</div>
+      <div className="grid grid-cols-1 items-start gap-7 lg:grid-cols-[210px_minmax(0,1fr)]">
+        <nav className="sticky top-[78px] hidden self-start rounded-xl border border-slate-200 bg-white p-3 shadow-card lg:block">
+          <div className="px-2 pb-2 pt-1 text-[11px] font-bold uppercase tracking-wider text-slate-400">On this page</div>
           {TOC.map(([id, label]) => (
-            <a key={id} href={`#${id}`}>{label}</a>
+            <a key={id} href={`#${id}`} className="block rounded-md px-2 py-1.5 text-[12.5px] font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-700">{label}</a>
           ))}
         </nav>
 
-        <div className="docs-content">
+        <div className="flex flex-col gap-4">
           <Section id="overview" n="1" title="Overview">
             <p>
               An <strong>AI-first CRM</strong> for logging Healthcare Professional (HCP) interactions.
@@ -52,6 +55,12 @@ export default function DocsPage() {
             <p>
               <strong>Stack:</strong> React + Redux (Vite, Inter font) · FastAPI · LangGraph +
               LangChain + Groq (<code>openai/gpt-oss-120b</code>) · PostgreSQL.
+            </p>
+            <p>
+              <strong>Beyond the form:</strong> saved interactions appear in the <a href="/pipeline">Pipeline</a>
+              table, HCPs in the <a href="/directory">HCP Directory</a>, and a small <a href="/analytics">Analytics</a>
+              view summarizes them. The assistant can <strong>clear a field or remove a specific tag</strong>
+              (e.g. "clear the attendees", "remove Dr. Sharma"), and every field the AI touches briefly highlights.
             </p>
           </Section>
 
@@ -78,7 +87,7 @@ export default function DocsPage() {
               <thead><tr><th>Folder</th><th>Responsibility</th></tr></thead>
               <tbody>
                 <tr><td>pages/</td><td>LogInteraction (split view), Admin (Groq settings), Docs</td></tr>
-                <tr><td>components/</td><td>InteractionForm, ChatAssistant, field widgets (HCP, Materials, Samples, ChipList), Icon (inline SVG)</td></tr>
+                <tr><td>components/</td><td>InteractionForm, ChatAssistant, field widgets (HCP, Attendees, Materials, Samples), Icon (inline SVG)</td></tr>
                 <tr><td>redux/</td><td>formSlice (form + updatedFields highlight), chatSlice, adminSlice, store</td></tr>
                 <tr><td>hooks/</td><td>useChat (AI→form path), useVoiceInput (recording), useSpeech (TTS)</td></tr>
                 <tr><td>services/</td><td>api.js — fetch wrapper</td></tr>
@@ -133,12 +142,12 @@ export default function DocsPage() {
             <table className="dtable">
               <thead><tr><th>Tool</th><th>Responsibility</th></tr></thead>
               <tbody>
-                <tr><td>log_interaction<span className="tag req">mandatory</span></td><td>LLM-extract all structured fields from a free-text description.</td></tr>
-                <tr><td>edit_interaction<span className="tag req">mandatory</span></td><td>Update a single field on a correction; appends to lists.</td></tr>
-                <tr><td>search_hcp<span className="tag">custom</span></td><td>Resolve the HCP against the directory (DB).</td></tr>
-                <tr><td>search_materials<span className="tag">custom</span></td><td>Map a mentioned material to the catalog type and add it.</td></tr>
-                <tr><td>suggest_followups<span className="tag">custom</span></td><td>LLM-generate next-step follow-up actions.</td></tr>
-                <tr><td>save_interaction<span className="tag">custom</span></td><td>Validate required fields (HCP Name + Topics), then persist; else report what's missing.</td></tr>
+                <tr><td>log_interaction<span className="doc-tag req">mandatory</span></td><td>LLM-extract all structured fields from a free-text description.</td></tr>
+                <tr><td>edit_interaction<span className="doc-tag req">mandatory</span></td><td>Change a single field with an action: <code>set</code> / <code>add</code> / <code>remove</code> a specific item / <code>clear</code> the whole field (e.g. "clear the attendees", "remove Dr. Sharma").</td></tr>
+                <tr><td>search_hcp<span className="doc-tag">custom</span></td><td>Resolve the HCP against the directory (DB).</td></tr>
+                <tr><td>search_materials<span className="doc-tag">custom</span></td><td>Map a mentioned material to the catalog type and add it.</td></tr>
+                <tr><td>suggest_followups<span className="doc-tag">custom</span></td><td>LLM-generate next-step follow-up actions.</td></tr>
+                <tr><td>save_interaction<span className="doc-tag">custom</span></td><td>Validate required fields (HCP Name + Topics), then persist; else report what's missing.</td></tr>
               </tbody>
             </table>
             <p><strong>Tool-selection:</strong> the LLM picks tools from their docstrings + system-prompt rules. Tools return <code>content_and_artifact</code> — text for the model + a structured artifact (<code>form_patch</code>, <code>suggestions</code>, <code>saved_id</code>) the API harvests. Tools that need live form values read them via <code>InjectedState("form")</code>.</p>
@@ -173,7 +182,7 @@ Talk-back: assistant reply ─▶ browser SpeechSynthesis (TTS toggle)`}</div>
               <thead><tr><th>Table</th><th>Columns</th></tr></thead>
               <tbody>
                 <tr><td>hcps</td><td>id, name, specialty, organization — the HCP directory</td></tr>
-                <tr><td>interactions</td><td>hcp_name, interaction_type, date, time, attendees (JSON), topics, materials_shared (JSON [{type,name}]), samples_distributed (JSON [{name,quantity}]), sentiment, outcomes, followup_actions, created_at</td></tr>
+                <tr><td>interactions</td><td>hcp_name, interaction_type, date, time, attendees (JSON), topics, materials_shared (JSON <code>{'[{type, name}]'}</code>), samples_distributed (JSON <code>{'[{name, quantity}]'}</code>), sentiment, outcomes, followup_actions, created_at</td></tr>
                 <tr><td>app_settings</td><td>key, value — runtime Groq key/model overlay for the Admin panel</td></tr>
               </tbody>
             </table>

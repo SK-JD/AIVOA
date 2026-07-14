@@ -8,10 +8,11 @@ Today's date is {{ today }} (format YYYY-MM-DD). Resolve relative dates ("today"
 Return JSON with exactly these keys:
 {
   "hcp_name": "the HCP's name, e.g. 'Dr. Smith' (string)",
-  "interaction_type": "one of: Meeting, Call, Email, Conference, Virtual. Infer from the verb: 'met'/'visited' -> Meeting, 'called'/'phoned' -> Call, 'emailed' -> Email, 'video'/'zoom' -> Virtual. Default 'Meeting'",
+  "interaction_type": "one of: In-person Meeting, Call, Email, Virtual, Conference. Infer from the verb: 'met'/'visited' -> In-person Meeting, 'called'/'phoned' -> Call, 'emailed' -> Email, 'video'/'zoom' -> Virtual. Default 'In-person Meeting'",
   "date": "YYYY-MM-DD if a meeting date is given, else ''",
-  "time": "HH:MM 24h if a time is given, else ''",
-  "attendees": ["other people present BESIDES the HCP (e.g. 'Regional Manager', 'Product Specialist', 'Nurse'); exclude the HCP"],
+  "time": "HH:MM (or e.g. '10:30 AM') if a time is given, else ''",
+  "duration": "meeting length if mentioned, e.g. '25 minutes', else ''",
+  "attendees": [{"name": "person present besides the HCP", "role": "their role e.g. Product Specialist, Regional Manager, Nurse"}],
   "topics": "concise comma-separated discussion points (e.g. 'Product X efficacy, dosage, side effects')",
   "materials_shared": [{"type": "one of: Brochure, Product Leaflet, Clinical Study, Research Paper, Product Catalogue, Presentation Deck, Safety Information, Other Marketing Material", "name": "short label e.g. 'Product X Brochure'"}],
   "samples_distributed": [{"name": "product sample name e.g. 'Product X Sample'", "quantity": 1}],

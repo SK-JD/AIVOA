@@ -34,6 +34,7 @@ class Interaction(Base):
     interaction_type: Mapped[str] = mapped_column(String(100), default="Meeting")
     date: Mapped[str] = mapped_column(String(20), default="")
     time: Mapped[str] = mapped_column(String(20), default="")
+    duration: Mapped[str] = mapped_column(String(50), default="")
     attendees: Mapped[list] = mapped_column(JSON, default=list)
     topics: Mapped[str] = mapped_column(Text, default="")
     materials_shared: Mapped[list] = mapped_column(JSON, default=list)

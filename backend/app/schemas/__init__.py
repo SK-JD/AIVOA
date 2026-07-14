@@ -1,9 +1,13 @@
 from app.schemas.schemas import (
+    Attendee,
     ChatMessage,
     ChatRequest,
     ChatResponse,
     FormState,
     HCPOut,
+    InteractionOut,
+    Material,
+    Sample,
     SettingsIn,
     SettingsOut,
     TestConnectionIn,
@@ -11,11 +15,15 @@ from app.schemas.schemas import (
 )
 
 __all__ = [
+    "Attendee",
     "ChatMessage",
     "ChatRequest",
     "ChatResponse",
     "FormState",
     "HCPOut",
+    "InteractionOut",
+    "Material",
+    "Sample",
     "SettingsIn",
     "SettingsOut",
     "TestConnectionIn",

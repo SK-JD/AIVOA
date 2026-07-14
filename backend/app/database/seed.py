@@ -7,6 +7,7 @@ from app.database.session import SessionLocal, init_db
 from app.models.models import HCP
 
 SAMPLE_HCPS = [
+    {"name": "Dr. Rajesh Kumar", "specialty": "Senior Cardiologist", "organization": "Apollo Hospital, Chennai"},
     {"name": "Dr. Smith", "specialty": "Oncology", "organization": "City General Hospital"},
     {"name": "Dr. Sharma", "specialty": "Cardiology", "organization": "Apollo Clinic"},
     {"name": "Dr. Patel", "specialty": "Neurology", "organization": "Sunrise Medical Center"},

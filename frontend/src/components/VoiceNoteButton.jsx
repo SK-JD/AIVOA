@@ -7,21 +7,17 @@ export default function VoiceNoteButton() {
 
   if (!supported) {
     return (
-      <button className="btn ghost sm voice-btn" disabled title="Voice recording not supported in this browser">
+      <button className="btn btn-ghost btn-sm" disabled title="Voice recording not supported in this browser">
         <Icon name="mic" size={15} /> Summarize from Voice Note (Requires Consent)
       </button>
     )
   }
 
-  const label = busy
-    ? 'Transcribing…'
-    : recording
-      ? 'Stop & Summarize'
-      : 'Summarize from Voice Note (Requires Consent)'
+  const label = busy ? 'Transcribing…' : recording ? 'Stop & Summarize' : 'Summarize from Voice Note (Requires Consent)'
 
   return (
     <button
-      className={`btn ghost sm voice-btn${recording ? ' recording' : ''}`}
+      className={`btn btn-sm ${recording ? 'animate-pulse-rec border-red-200 bg-red-50 text-red-500' : 'btn-ghost'}`}
       onClick={toggle}
       disabled={busy}
     >

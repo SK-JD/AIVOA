@@ -20,9 +20,9 @@ export function useChat() {
 
     // Send the running history + current form snapshot so edit/save see live values.
     const history = messages.map((m) => ({ role: m.role, content: m.content }))
-    const { hcp_name, interaction_type, date, time, attendees, topics, materials_shared,
+    const { hcp_name, interaction_type, date, time, duration, attendees, topics, materials_shared,
       samples_distributed, sentiment, outcomes, followup_actions } = form
-    const formSnapshot = { hcp_name, interaction_type, date, time, attendees, topics,
+    const formSnapshot = { hcp_name, interaction_type, date, time, duration, attendees, topics,
       materials_shared, samples_distributed, sentiment, outcomes, followup_actions }
 
     try {

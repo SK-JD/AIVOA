@@ -26,6 +26,33 @@ const formSlice = createSlice({
     clearUpdated(state) {
       state.updatedFields = []
     },
+    // Load a saved interaction row back into the form (from the Pipeline) for chat editing.
+    loadInteraction(state, action) {
+      const src = action.payload || {}
+      const changed = []
+      Object.keys(EMPTY_FORM).forEach((k) => {
+        state[k] = k in src && src[k] != null ? src[k] : EMPTY_FORM[k]
+        if (src[k]) changed.push(k)
+      })
+      state.savedId = null
+      state.suggestions = []
+      state.updatedFields = changed
+    },
+    clearField(state, action) {
+      const field = action.payload
+      state[field] = Array.isArray(state[field]) ? [] : ''
+    },
+    // Attendees — list of { name, role }
+    addAttendee(state, action) {
+      const { name, role } = action.payload
+      const label = (name || '').trim()
+      if (label && !state.attendees.some((a) => a.name.toLowerCase() === label.toLowerCase())) {
+        state.attendees.push({ name: label, role: (role || '').trim() })
+      }
+    },
+    removeAttendee(state, action) {
+      state.attendees = state.attendees.filter((_, i) => i !== action.payload)
+    },
     // Materials Shared — list of { type, name }
     addMaterial(state, action) {
       const { type, name } = action.payload
@@ -70,6 +97,10 @@ export const {
   setField,
   applyPatch,
   clearUpdated,
+  loadInteraction,
+  clearField,
+  addAttendee,
+  removeAttendee,
   addMaterial,
   removeMaterial,
   addSample,
