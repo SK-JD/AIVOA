@@ -5,6 +5,7 @@ import HCPNameField from './HCPNameField'
 import ChipList from './ChipList'
 import MaterialsField from './MaterialsField'
 import SamplesField from './SamplesField'
+import VoiceNoteButton from './VoiceNoteButton'
 import Icon from './Icon'
 
 const SENTIMENT_META = [
@@ -60,9 +61,7 @@ export default function InteractionForm() {
         <div className={cls('topics')}>
           <label>Topics Discussed {req('topics')}</label>
           <textarea placeholder="Key discussion points (e.g. Product X efficacy, dosage, pricing)..." value={form.topics} onChange={set('topics')} />
-          <button className="btn ghost sm voice-btn" title="Voice logging (coming soon)" disabled>
-            <Icon name="mic" size={15} /> Summarize from Voice Note (Requires Consent)
-          </button>
+          <VoiceNoteButton />
         </div>
 
         <div className="subhead">Materials Shared / Samples Distributed</div>

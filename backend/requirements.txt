@@ -1,6 +1,7 @@
 # Web framework
 fastapi
 uvicorn[standard]
+python-multipart
 
 # Database (sync SQLAlchemy + Postgres driver)
 SQLAlchemy>=2.0

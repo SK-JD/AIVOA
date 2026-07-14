@@ -50,6 +50,14 @@ export default function DocsPage() {
             <strong> won't save</strong> an incomplete record — it asks for the missing details first.
           </p>
 
+          <h3>Voice</h3>
+          <p>
+            Click the <strong>mic</strong> in the chat (or <strong>Summarize from Voice Note</strong>
+            on the form) to record. <strong>Groq Whisper</strong> transcribes it and the transcript
+            runs through the same agent — so speaking a note fills the form just like typing. Toggle
+            the <strong>speaker</strong> in the chat header to have replies read aloud (browser TTS).
+          </p>
+
           <h3>Admin</h3>
           <p>
             The <a href="/admin">Admin</a> panel lets you paste a Groq API key, pick a model, test

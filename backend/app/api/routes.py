@@ -1,5 +1,6 @@
 """HTTP API — app endpoints (chat, HCP search, health) + admin settings endpoints."""
-from fastapi import APIRouter, Depends, Header, HTTPException
+from fastapi import APIRouter, Depends, File, Header, HTTPException, UploadFile
+from fastapi.concurrency import run_in_threadpool
 from sqlalchemy.orm import Session
 
 from app.config import settings as env_settings
@@ -14,7 +15,7 @@ from app.schemas import (
     TestConnectionIn,
     TestConnectionResult,
 )
-from app.services import chat_service, llm, settings_service
+from app.services import chat_service, llm, settings_service, voice
 
 router = APIRouter(prefix="/api")
 
@@ -32,6 +33,20 @@ def chat(req: ChatRequest) -> ChatResponse:
         return chat_service.run_chat(req)
     except llm.GroqNotConfiguredError as exc:
         raise HTTPException(status_code=503, detail=str(exc)) from exc
+
+
+@router.post("/voice/transcribe")
+async def transcribe_voice(file: UploadFile = File(...)) -> dict:
+    """Speech-to-text (Groq Whisper). The frontend feeds the transcript back into /api/chat,
+    so the voice note runs through the same extraction/clarify/validate agent workflow."""
+    audio = await file.read()
+    if not audio:
+        raise HTTPException(status_code=400, detail="Empty audio upload.")
+    try:
+        transcript = await run_in_threadpool(voice.transcribe, audio, file.filename or "audio.webm")
+    except llm.GroqNotConfiguredError as exc:
+        raise HTTPException(status_code=503, detail=str(exc)) from exc
+    return {"transcript": transcript}
 
 
 @router.get("/hcps", response_model=list[HCPOut])

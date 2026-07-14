@@ -149,19 +149,25 @@ whole point of an *AI-first* CRM.
 
 ---
 
-## 7. Voice processing (planned — phase 2)
+## 7. Voice processing
 
 ```
-Browser MediaRecorder ─▶ POST /api/voice/transcribe
+Browser MediaRecorder ─▶ POST /api/voice/transcribe (multipart)
    ─▶ Groq Whisper (whisper-large-v3-turbo) ─▶ transcript
-   ─▶ transcript flows through the SAME agent (log_interaction)
+   ─▶ transcript flows through the SAME agent (POST /api/chat → log_interaction)
    ─▶ fields populate + AI summary/clarify in chat
-Talk-back: assistant reply ─▶ browser SpeechSynthesis (TTS)
+Talk-back: assistant reply ─▶ browser SpeechSynthesis (TTS), toggled in the chat header
 ```
+
+- **STT** — `services/voice.py` calls the Groq SDK's audio endpoint directly (audio isn't part of
+  the LangChain chat seam). The "Summarize from Voice Note" button and the chat mic both record via
+  `useVoiceInput` (MediaRecorder), POST the blob, then feed the transcript into `useChat.send`.
+- **TTS** — `useSpeech` uses the browser's built-in `SpeechSynthesis` (zero dependencies); a speaker
+  toggle in the chat header speaks each new assistant reply.
+
 **Why route the transcript through the existing agent:** speech is just another way to produce the
 user's text — reusing the graph means the voice path gets extraction, clarifying questions, and
-validation for free (no separate pipeline). STT uses the Groq SDK directly (audio isn't in the
-LangChain chat seam). TTS uses the browser's built-in `SpeechSynthesis` — zero dependencies.
+validation for free, with no separate pipeline.
 
 ---
 

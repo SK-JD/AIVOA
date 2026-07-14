@@ -40,6 +40,10 @@ conditional edge — the LLM decides which tool to call; there is no hardcoded f
 The agent is form-aware each turn (current form + missing required fields are injected into the
 system prompt), so it clarifies instead of guessing.
 
+**Voice:** record a note (🎙 in the chat or "Summarize from Voice Note" on the form) → **Groq
+Whisper** transcribes it → the transcript runs through the same agent to fill the form. Optional
+spoken replies use the browser's built-in text-to-speech (toggle in the chat header).
+
 ## Project structure
 
 ```

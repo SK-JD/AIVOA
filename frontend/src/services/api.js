@@ -33,6 +33,23 @@ export const api = {
   sendChat: (payload) => request('/chat', { method: 'POST', body: JSON.stringify(payload) }),
   searchHcps: (q) => request(`/hcps?q=${encodeURIComponent(q)}`),
 
+  // Voice: multipart upload (no JSON Content-Type — the browser sets the boundary)
+  transcribe: async (blob) => {
+    const fd = new FormData()
+    fd.append('file', blob, 'note.webm')
+    const res = await fetch('/api/voice/transcribe', { method: 'POST', body: fd })
+    if (!res.ok) {
+      let detail = res.statusText
+      try {
+        detail = formatDetail((await res.json()).detail) || detail
+      } catch {
+        /* ignore */
+      }
+      throw new Error(detail)
+    }
+    return res.json()
+  },
+
   // Admin (token sent as X-Admin-Token header)
   getSettings: (token) => request('/admin/settings', { headers: { 'X-Admin-Token': token } }),
   saveSettings: (token, body) =>
